@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Notifications Test Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .connected { background-color: #d4edda; color: #155724; }
+        .disconnected { background-color: #f8d7da; color: #721c24; }
+        .notification {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+        }
+        .notification-type {
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .notification-message {
+            margin: 5px 0;
+        }
+        .notification-time {
+            font-size: 0.8em;
+            color: #666;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+        #notifications {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔔 Socket.IO Task Notifications Test Client</h1>
+    
+    <div class="container">
+        <h2>Connection Settings</h2>
+        <div class="form-group">
+            <label>Server URL:</label>
+            <input type="text" id="serverUrl" value="http://localhost:4000" />
+        </div>
+        <div class="form-group">
+            <label>User ID:</label>
+            <input type="text" id="userId" value="user123" placeholder="Enter user ID" />
+        </div>
+        <div class="form-group">
+            <label>User Name:</label>
+            <input type="text" id="userName" value="John Doe" placeholder="Enter user name" />
+        </div>
+        <div class="form-group">
+            <label>User Role:</label>
+            <select id="userRole">
+                <option value="USER">USER</option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+        </div>
+        
+        <button id="connectBtn" onclick="connectSocket()">Connect</button>
+        <button id="disconnectBtn" onclick="disconnectSocket()" disabled>Disconnect</button>
+        
+        <div id="connectionStatus" class="status disconnected">
+            Status: Disconnected
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Test Actions</h2>
+        <p>Use these buttons to simulate different notification scenarios:</p>
+        
+        <button onclick="simulateTaskAssignment()" disabled class="test-btn">
+            📋 Simulate Task Assignment
+        </button>
+        <button onclick="simulateTaskUpdate()" disabled class="test-btn">
+            ✏️ Simulate Task Update
+        </button>
+        <button onclick="simulateTaskCompletion()" disabled class="test-btn">
+            ✅ Simulate Task Completion
+        </button>
+        <button onclick="simulateTaskDeletion()" disabled class="test-btn">
+            🗑️ Simulate Task Deletion
+        </button>
+    </div>
+
+    <div class="container">
+        <h2>📨 Received Notifications</h2>
+        <button onclick="clearNotifications()" class="clear-btn">Clear All</button>
+        <div id="notifications"></div>
+    </div>
+
+    <div class="container">
+        <h2>📊 Connection Info</h2>
+        <div id="connectionInfo">
+            <p><strong>Socket ID:</strong> <span id="socketId">Not connected</span></p>
+            <p><strong>Connected Users:</strong> <span id="connectedUsers">0</span></p>
+            <p><strong>Notifications Received:</strong> <span id="notificationCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        let socket = null;
+        let notificationCount = 0;
+
+        function connectSocket() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const userId = document.getElementById('userId').value;
+            const userName = document.getElementById('userName').value;
+            const userRole = document.getElementById('userRole').value;
+
+            if (!userId.trim()) {
+                alert('Please enter a User ID');
+                return;
+            }
+
+            // Connect to the notifications namespace
+            socket = io(`${serverUrl}/notifications`, {
+                withCredentials: true,
+                transports: ['websocket', 'polling']
+            });
+
+            // Connection event handlers
+            socket.on('connect', () => {
+                console.log('Connected to server:', socket.id);
+                updateConnectionStatus(true);
+                document.getElementById('socketId').textContent = socket.id;
+                
+                // Join the notification room
+                socket.emit('join', {
+                    userId: userId,
+                    user: {
+                        id: userId,
+                        name: userName,
+                        email: `${userId}@example.com`,
+                        role: userRole
+                    }
+                });
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+                updateConnectionStatus(false);
+                document.getElementById('socketId').textContent = 'Not connected';
+            });
+
+            socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                alert(`Connection failed: ${error.message}`);
+            });
+
+            // Notification event handlers
+            socket.on('joined', (data) => {
+                console.log('Successfully joined notifications:', data);
+                addLogMessage(`✅ Joined notification room: ${data.message}`);
+            });
+
+            socket.on('taskNotification', (notification) => {
+                console.log('Received task notification:', notification);
+                displayNotification(notification);
+                notificationCount++;
+                document.getElementById('notificationCount').textContent = notificationCount;
+            });
+
+            // Error handlers
+            socket.on('error', (error) => {
+                console.error('Socket error:', error);
+                addLogMessage(`❌ Error: ${error}`);
+            });
+        }
+
+        function disconnectSocket() {
+            if (socket) {
+                const userId = document.getElementById('userId').value;
+                socket.emit('leave', { userId: userId });
+                socket.disconnect();
+                socket = null;
+                updateConnectionStatus(false);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDiv = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const testBtns = document.querySelectorAll('.test-btn');
+
+            if (connected) {
+                statusDiv.textContent = 'Status: Connected';
+                statusDiv.className = 'status connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                testBtns.forEach(btn => btn.disabled = false);
+            } else {
+                statusDiv.textContent = 'Status: Disconnected';
+                statusDiv.className = 'status disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                testBtns.forEach(btn => btn.disabled = true);
+            }
+        }
+
+        function displayNotification(notification) {
+            const notificationsDiv = document.getElementById('notifications');
+            const notificationElement = document.createElement('div');
+            notificationElement.className = 'notification';
+            
+            const typeColor = {
+                'TASK_ASSIGNED': '#4caf50',
+                'TASK_UPDATED': '#ff9800',
+                'TASK_COMPLETED': '#2196f3',
+                'TASK_DELETED': '#f44336'
+            };
+
+            notificationElement.innerHTML = `
+                <div class="notification-type" style="color: ${typeColor[notification.type] || '#333'}">
+                    ${getNotificationIcon(notification.type)} ${notification.type}
+                </div>
+                <div class="notification-message">${notification.message}</div>
+                <div class="notification-time">
+                    📋 Task: ${notification.taskTitle} | 
+                    🕒 ${new Date(notification.timestamp).toLocaleTimeString()}
+                </div>
+            `;
+            
+            notificationsDiv.insertBefore(notificationElement, notificationsDiv.firstChild);
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'TASK_ASSIGNED': '📋',
+                'TASK_UPDATED': '✏️',
+                'TASK_COMPLETED': '✅',
+                'TASK_DELETED': '🗑️'
+            };
+            return icons[type] || '📢';
+        }
+
+        function addLogMessage(message) {
+            const notificationsDiv = document.getElementById('notifications');
+            const logElement = document.createElement('div');
+            logElement.style.cssText = 'padding: 8px; margin: 4px 0; background: #f8f9fa; border-radius: 4px; font-size: 0.9em;';
+            logElement.innerHTML = `${message} <span style="color: #666; font-size: 0.8em;">${new Date().toLocaleTimeString()}</span>`;
+            notificationsDiv.insertBefore(logElement, notificationsDiv.firstChild);
+        }
+
+        function clearNotifications() {
+            document.getElementById('notifications').innerHTML = '';
+            notificationCount = 0;
+            document.getElementById('notificationCount').textContent = '0';
+        }
+
+        // Test simulation functions
+        function simulateTaskAssignment() {
+            const notification = {
+                type: 'TASK_ASSIGNED',
+                taskId: 'task_' + Date.now(),
+                taskTitle: 'Sample Task Assignment',
+                message: 'You have been assigned a new task: "Sample Task Assignment" by Manager User',
+                assignedTo: document.getElementById('userId').value,
+                assignedBy: 'manager123',
+                timestamp: new Date().toISOString()
+            };
+            displayNotification(notification);
+            notificationCount++;
+            document.getElementById('notificationCount').textContent = notificationCount;
+        }
+
+        function simulateTaskUpdate() {
+            const notification = {
+                type: 'TASK_UPDATED',
+                taskId: 'task_' + Date.now(),
+                taskTitle: 'Updated Task Example',
+                message: 'Task "Updated Task Example" has been updated by John Doe. Changes: status, priority',
+                timestamp: new Date().toISOString()
+            };
+            displayNotification(notification);
+            notificationCount++;
+            document.getElementById('notificationCount').textContent = notificationCount;
+        }
+
+        function simulateTaskCompletion() {
+            const notification = {
+                type: 'TASK_COMPLETED',
+                taskId: 'task_' + Date.now(),
+                taskTitle: 'Completed Task Example',
+                message: 'Task "Completed Task Example" has been completed by Team Member',
+                timestamp: new Date().toISOString()
+            };
+            displayNotification(notification);
+            notificationCount++;
+            document.getElementById('notificationCount').textContent = notificationCount;
+        }
+
+        function simulateTaskDeletion() {
+            const notification = {
+                type: 'TASK_DELETED',
+                taskId: 'task_' + Date.now(),
+                taskTitle: 'Deleted Task Example',
+                message: 'Task "Deleted Task Example" has been deleted by Admin User',
+                timestamp: new Date().toISOString()
+            };
+            displayNotification(notification);
+            notificationCount++;
+            document.getElementById('notificationCount').textContent = notificationCount;
+        }
+
+        // Auto-connect on page load (optional)
+        // window.onload = () => connectSocket();
+    </script>
+</body>
+</html>
