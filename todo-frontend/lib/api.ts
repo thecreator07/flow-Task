@@ -9,7 +9,7 @@ import {
   BulkDeleteResponse,
 } from '@/types';
 
-const API_BASE_URL = process.env.BAES_URL||'http://localhost:4000';
+const API_BASE_URL = process.env.BASE_URL||'http://localhost:4000';
 
 class ApiService {
   private async request<T>(
