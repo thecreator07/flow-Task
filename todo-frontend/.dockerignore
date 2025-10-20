@@ -1,0 +1,20 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/.nyc_output
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# Next.js build output
+.next
+!.next/standalone # Keep the standalone output folder
+!.next/static     # Keep the static assets
