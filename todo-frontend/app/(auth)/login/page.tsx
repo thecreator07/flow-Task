@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { login } = useAuth(); 
-
+console.log(process.env.NEXT_PUBLIC_BASE_URL)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
