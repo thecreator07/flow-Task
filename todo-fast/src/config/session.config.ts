@@ -23,7 +23,8 @@ export const getSessionConfig = (
       secure: isProduction, 
       httpOnly: true, 
       maxAge: 24 * 60 * 60 * 1000, 
-      sameSite: isProduction ? "strict" : "lax", 
+      sameSite: isProduction ? "none" : "lax",
+      domain:isProduction? process.env.CORS_ORIGIN:'http://localhost:3000'
     },
     name: "sessionId", 
   };
