@@ -17,13 +17,24 @@ async function bootstrap() {
   app.use(session(getSessionConfig(configService)));
 
   app.use(cookieParser());
-  const corsOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  
+  // Configure CORS origins based on environment
+  const isProduction = process.env.NODE_ENV === 'production';
+  const corsOrigins = isProduction
+    ? (process.env.CORS_ORIGIN 
+        ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+        : ['https://your-frontend-domain.run.app']) // Replace with actual frontend URL
     : ['http://localhost:3000'];
+    
+  console.log('CORS Origins:', corsOrigins);
+  console.log('Environment:', process.env.NODE_ENV);
     
   app.enableCors({
     origin: corsOrigins,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
   });
 
   app.useGlobalPipes(
