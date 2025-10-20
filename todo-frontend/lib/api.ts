@@ -9,7 +9,7 @@ import {
   BulkDeleteResponse,
 } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:4000';
+const API_BASE_URL = 'https://flow-task-server-285212977651.asia-south2.run.app';
 
 class ApiService {
   private async request<T>(
