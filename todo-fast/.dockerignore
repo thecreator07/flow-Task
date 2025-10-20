@@ -1,0 +1,30 @@
+# Dependency/Build Artifacts
+**/node_modules
+dist
+coverage
+npm-debug.log
+yarn-error.log
+.nyc_output/
+
+# Version Control
+.git
+.gitignore
+
+# Editor/OS Files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+*.swp
+
+# Environment/Secret Files (Critical for Security)
+.env
+.env.*
+.secrets/
+*.key
+*.pem
+
+# Build System Files
+Dockerfile
+docker-compose*.yml
+.dockerignore
