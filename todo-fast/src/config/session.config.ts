@@ -25,7 +25,7 @@ export const getSessionConfig = (
       maxAge: 24 * 60 * 60 * 1000, 
       sameSite: isProduction ? "none" : "lax",
       // Don't set domain in production to allow cross-origin cookies
-      domain: isProduction ? undefined : undefined
+      domain: undefined
     },
     name: "sessionId", 
   };
