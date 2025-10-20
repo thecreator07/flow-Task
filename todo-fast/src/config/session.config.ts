@@ -6,32 +6,24 @@ export const getSessionConfig = (
   configService: ConfigService,
 ): session.SessionOptions => {
   const isProduction = configService.get("NODE_ENV") === "production";
-  const sessionSecret = configService.get<string>("SESSION_SECRET");
-  
-  // Validate session secret in production
-  if (isProduction && (!sessionSecret || sessionSecret === "default-session-secret-change-in-production")) {
-    throw new Error("SESSION_SECRET must be set to a secure value in production");
-  }
 
   return {
-    secret: sessionSecret || "default-session-secret-change-in-production",
+    secret:
+      configService.get<string>("SESSION_SECRET") ||
+      "default-session-secret-change-in-production",
     resave: false,
     saveUninitialized: false,
-    rolling: true, // Reset expiration on activity
     store: MongoStore.create({
       mongoUrl: configService.get<string>("MONGODB_URI"),
       dbName: "todo-fast",
       collectionName: "sessions",
-      ttl: isProduction ? 12 * 60 * 60 : 24 * 60 * 60, // 12h in prod, 24h in dev
-      touchAfter: 24 * 3600, // Lazy session update
+      ttl: 24 * 60 * 60, 
     }),
     cookie: {
-      secure: isProduction, // HTTPS required in production
+      secure: false, // Set to true only in production with HTTPS
       httpOnly: true, 
-      maxAge: isProduction ? 12 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 12h in prod, 24h in dev
-      sameSite: isProduction ? "none" : "lax",
-      // Don't set domain in production to allow cross-origin cookies
-      domain: undefined
+      maxAge: 24 * 60 * 60 * 1000, 
+      sameSite: "lax", // More permissive for cross-origin requests
     },
     name: "sessionId", 
   };

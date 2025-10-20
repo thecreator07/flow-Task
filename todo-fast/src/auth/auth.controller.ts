@@ -64,13 +64,18 @@ export class AuthController {
   logout(@Req() req: ExpressRequest, @Res() res: Response): void {
     req.session.destroy((err) => {
       if (err) {
-        
+        console.error('Session destroy error:', err);
         return res.status(500).json({
           success: false,
           message: "Failed to logout",
         });
       }
-      res.clearCookie('sessionId')
+      // Clear the session cookie
+      res.clearCookie('sessionId', {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax'
+      });
       return res.json({
         success: true,
         message: "Logged out successfully",

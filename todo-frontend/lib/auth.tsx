@@ -11,6 +11,7 @@ interface AuthContextType {
   loading: boolean;
   login: (userData: User) => void;
   logout: () => Promise<void>;
+  refreshAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,13 +22,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-      setLoading(false);
-    } else {
-      checkAuth();
-    }
+    // Always check server session on mount - no localStorage
+    checkAuth();
   }, []);
 
   const checkAuth = async () => {
@@ -35,10 +31,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.getCurrentUser();
       if (response.success && response.user) {
         setUser(response.user);
-        localStorage.setItem('user', JSON.stringify(response.user));
+      } else {
+        setUser(null);
       }
-    } catch (error:unknown) {
-      console.log( error instanceof Error?error.message:"")
+    } catch (error: unknown) {
+      console.log('Auth check failed:', error instanceof Error ? error.message : "Unknown error");
       setUser(null);
     } finally {
       setLoading(false);
@@ -46,24 +43,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = (userData: User) => {
+    // Only set user state - session is managed by server
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = async () => {
     try {
       await api.logout();
       setUser(null);
-      localStorage.removeItem('user');
       toast.success('Logged out successfully');
       router.push('/login');
-    } catch (error:unknown) {
-      toast.error(` ${error instanceof Error?error.message:"loout failed"}`)
+    } catch (error: unknown) {
+      toast.error(`Logout failed: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
+  const refreshAuth = async () => {
+    await checkAuth();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshAuth }}>
       {children}
     </AuthContext.Provider>
   );
