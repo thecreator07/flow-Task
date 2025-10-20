@@ -14,9 +14,9 @@ async function bootstrap() {
   app.use(session(getSessionConfig(configService)));
 
   app.use(cookieParser());
-  
+  console.log(process.env.CORS_ORIGIN)
   app.enableCors({
-    origin: [process.env.CORS_ORIGIN, "http://localhost:3000"],
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   });
 
