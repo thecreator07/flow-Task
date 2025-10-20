@@ -8,8 +8,8 @@ export const getSessionConfig = (
   configService: ConfigService,
 ): session.SessionOptions => {
   // Check for the production environment
-  const isProduction = configService.get("NODE_ENV") === "production";
-  console.log("isproduction",isProduction)
+  // const isProduction = configService.get("NODE_ENV") === "production";
+  // console.log("isproduction",isProduction)
   return {
     secret:
       configService.get<string>("SESSION_SECRET") ||
@@ -24,10 +24,10 @@ export const getSessionConfig = (
     }),
     cookie: {
      
-      secure: isProduction,
+      secure: true,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: 'none',
     },
     name: "sessionId",
   };
