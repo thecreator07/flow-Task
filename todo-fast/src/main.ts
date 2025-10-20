@@ -14,10 +14,19 @@ async function bootstrap() {
   app.use(session(getSessionConfig(configService)));
 
   app.use(cookieParser());
-  console.log(process.env.CORS_ORIGIN)
+  console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
+  
+  // Configure CORS for production and development
+  const corsOrigins = process.env.CORS_ORIGIN 
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+    : ['http://localhost:3000'];
+    
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: corsOrigins,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
   });
 
   app.useGlobalPipes(

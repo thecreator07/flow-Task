@@ -24,7 +24,8 @@ export const getSessionConfig = (
       httpOnly: true, 
       maxAge: 24 * 60 * 60 * 1000, 
       sameSite: isProduction ? "none" : "lax",
-      domain:isProduction? process.env.CORS_ORIGIN:'http://localhost:3000'
+      // Don't set domain in production to allow cross-origin cookies
+      domain: isProduction ? undefined : undefined
     },
     name: "sessionId", 
   };
