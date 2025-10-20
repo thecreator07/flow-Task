@@ -10,10 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  app.use(cookieParser());
+  
   // Configure session middleware
   app.use(session(getSessionConfig(configService)));
-
-  app.use(cookieParser());
   console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
   
   // Configure CORS for production and development
