@@ -1,3 +1,5 @@
+// src/config/session.config.ts
+
 import { ConfigService } from "@nestjs/config";
 import * as session from "express-session";
 import MongoStore from "connect-mongo";
@@ -5,8 +7,9 @@ import MongoStore from "connect-mongo";
 export const getSessionConfig = (
   configService: ConfigService,
 ): session.SessionOptions => {
+  // Check for the production environment
   const isProduction = configService.get("NODE_ENV") === "production";
-
+  console.log("isproduction",isProduction)
   return {
     secret:
       configService.get<string>("SESSION_SECRET") ||
@@ -17,14 +20,15 @@ export const getSessionConfig = (
       mongoUrl: configService.get<string>("MONGODB_URI"),
       dbName: "todo-fast",
       collectionName: "sessions",
-      ttl: 24 * 60 * 60, 
+      ttl: 24 * 60 * 60,
     }),
     cookie: {
-      secure: false, // Set to true only in production with HTTPS
-      httpOnly: true, 
-      maxAge: 24 * 60 * 60 * 1000, 
-      sameSite: "lax", // More permissive for cross-origin requests
+     
+      secure: isProduction,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: isProduction ? "none" : "lax",
     },
-    name: "sessionId", 
+    name: "sessionId",
   };
 };
