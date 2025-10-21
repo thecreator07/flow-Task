@@ -23,11 +23,11 @@ export const getSessionConfig = (
       ttl: 24 * 60 * 60,
     }),
     cookie: {
-     
       secure: true,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: 'none',
+      
     },
     name: "sessionId",
   };
