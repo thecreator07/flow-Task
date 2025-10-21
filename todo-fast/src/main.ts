@@ -5,29 +5,33 @@ import { ConfigService } from "@nestjs/config";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { getSessionConfig } from "./config/session.config";
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule,{logger:['error','warn','log']});
- 
-  // ✅ Access underlying Express instance
-  const expressApp = app.getHttpAdapter().getInstance()
-  expressApp.set('trust proxy', 1); // <-- this works inside NestJS!
 
+async function bootstrap() {
+  // Create app
+  const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'log'] });
+  const expressApp = app.getHttpAdapter().getInstance();
+  
+  // Get services
   const configService = app.get(ConfigService);
   
-  app.use(cookieParser());
+  // Set trust proxy for sessions
+  expressApp.set('trust proxy', 1);
   
-  // Configure session middleware
+  // Configure middleware
+  app.use(cookieParser());
   app.use(session(getSessionConfig(configService)));
   
+  // Configure CORS
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
     : ['http://localhost:3000'];
-    
+  
   app.enableCors({
     origin: corsOrigins,
     credentials: true,
   });
-
+  
+  // Configure global pipes
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
