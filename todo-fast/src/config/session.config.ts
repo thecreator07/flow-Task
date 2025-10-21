@@ -30,7 +30,9 @@ export const getSessionConfig = (
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: isProduction ? 'none' : 'lax',
       domain: isProduction ? 'https://flow-task-flame.vercel.app' : undefined,
+    
     },
     name: "sessionId",
+    
   };
 };
