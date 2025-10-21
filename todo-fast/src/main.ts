@@ -10,7 +10,7 @@ async function bootstrap() {
 
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-    : ['http://localhost:3000','https://flow-task-flame.vercel.app'];
+    : ['http://localhost:3000','https://flow-task-flame.vercel.app','https://flow-task-285212977651.asia-south2.run.app'];
   console.log(corsOrigins)
   app.enableCors({
     origin: corsOrigins,
