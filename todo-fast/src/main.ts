@@ -24,7 +24,7 @@ async function bootstrap() {
   // Configure CORS
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-    : ['http://localhost:3000', 'https://flow-task-285212977651.asia-south2.run.app'];
+    : ['http://localhost:3000', 'https://flow-task-flame.vercel.app'];
   
   console.log('CORS Origins:', corsOrigins);
   
@@ -32,7 +32,7 @@ async function bootstrap() {
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      
+
       // Allow same-origin requests
       if (corsOrigins.includes(origin)) {
         return callback(null, true);

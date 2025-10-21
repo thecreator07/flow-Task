@@ -29,7 +29,7 @@ export const getSessionConfig = (
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: isProduction ? 'none' : 'lax',
-      domain: isProduction ? '.flow-task-285212977651.asia-south2.run.app' : undefined,
+      domain: isProduction ? 'https://flow-task-flame.vercel.app' : undefined,
     },
     name: "sessionId",
   };
