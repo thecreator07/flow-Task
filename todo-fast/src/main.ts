@@ -24,11 +24,31 @@ async function bootstrap() {
   // Configure CORS
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-    : ['http://localhost:3000'];
+    : ['http://localhost:3000', 'https://flow-task-285212977651.asia-south2.run.app'];
+  
+  console.log('CORS Origins:', corsOrigins);
   
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Allow same-origin requests
+      if (corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      // Allow any subdomain of the deployed domain
+      if (origin.includes('flow-task-285212977651.asia-south2.run.app')) {
+        return callback(null, true);
+      }
+      
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
   });
   
   // Configure global pipes

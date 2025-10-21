@@ -10,7 +10,7 @@ import {
 } from '@/types';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://flow-task-server-285212977651.asia-south2.run.app'
+  ? 'https://task-server-285212977651.asia-south2.run.app'
   : 'http://localhost:4000';
 
 class ApiService {

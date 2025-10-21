@@ -7,9 +7,11 @@ import MongoStore from "connect-mongo";
 export const getSessionConfig = (
   configService: ConfigService,
 ): session.SessionOptions => {
-  // Check for the production environment
-  // const isProduction = configService.get("NODE_ENV") === "production";
-  // console.log("isproduction",isProduction)
+  const isProduction = configService.get("NODE_ENV") === "production";
+  const isHttps = configService.get("HTTPS") === "true" || isProduction;
+  
+  console.log("Session config - Production:", isProduction, "HTTPS:", isHttps);
+  
   return {
     secret:
       configService.get<string>("SESSION_SECRET") ||
@@ -23,11 +25,11 @@ export const getSessionConfig = (
       ttl: 24 * 60 * 60,
     }),
     cookie: {
-      secure: true,
+      secure: isHttps,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: 'none',
-      
+      sameSite: isProduction ? 'none' : 'lax',
+      domain: isProduction ? '.flow-task-285212977651.asia-south2.run.app' : undefined,
     },
     name: "sessionId",
   };
