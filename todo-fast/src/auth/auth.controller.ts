@@ -19,16 +19,11 @@ export class AuthController {
   async register(
     @Body() dto: RegisterDto,
     @Req() req: ExpressRequest,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<IAuthResponse> {
     const user = await this.auth.register(dto.name, dto.email, dto.password);
 
     // Store user in session
     req.session.user = user;
-    
-    console.log('Register - Session ID:', req.sessionID);
-    console.log('Register - Session user set:', !!req.session.user);
-    console.log('Register - Cookie settings:', req.session.cookie);
 
     return {
       success: true,
@@ -46,16 +41,11 @@ export class AuthController {
   async login(
     @Body() dto: LoginDto,
     @Req() req: ExpressRequest,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<IAuthResponse> {
     const user = await this.auth.login(dto.email, dto.password);
 
     // Store user in session
-    req.session.user = user;
-    
-    console.log('Login - Session ID:', req.sessionID);
-    console.log('Login - Session user set:', !!req.session.user);
-    console.log('Login - Cookie settings:', req.session.cookie);
+        req.session.user = user;
 
     return {
       success: true,
@@ -95,11 +85,8 @@ export class AuthController {
 
   @UseGuards(SessionAuthGuard)
   @Post("me")
-  me(@Session() user: ISessionUser, @Req() req: ExpressRequest): IUserInfoResponse {
-    console.log('Me endpoint - Session ID:', req.sessionID);
-    console.log('Me endpoint - Session user:', !!req.session.user);
-    console.log('Me endpoint - User from decorator:', !!user);
-    
+  me(@Session() user: ISessionUser): IUserInfoResponse {
+    console.log(user);
     if (!user) {
       return {
         success: false,

@@ -10,11 +10,8 @@ import {
 } from '@/types';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? (process.env.NEXT_PUBLIC_API_URL || 'https://flow-task-server-285212977651.asia-south2.run.app')
+  ? 'https://flow-task-server-285212977651.asia-south2.run.app'
   : 'http://localhost:4000';
-
-console.log('API Base URL:', API_BASE_URL);
-console.log('Environment:', process.env.NODE_ENV);
 
 class ApiService {
   private async request<T>(

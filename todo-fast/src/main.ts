@@ -9,32 +9,21 @@ import { getSessionConfig } from "./config/session.config";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{logger:['error','warn','log']});
  
-  
-
   const configService = app.get(ConfigService);
+  
+  app.use(cookieParser());
 
   // Configure session middleware
   app.use(session(getSessionConfig(configService)));
 
-  app.use(cookieParser());
   
-  // Configure CORS origins based on environment
-  const isProduction = process.env.NODE_ENV === 'production';
-  const corsOrigins = isProduction
-    ? (process.env.CORS_ORIGIN 
-        ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-        : ['https://your-frontend-domain.run.app']) // Replace with actual frontend URL
+  const corsOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
     : ['http://localhost:3000'];
-    
-  console.log('CORS Origins:', corsOrigins);
-  console.log('Environment:', process.env.NODE_ENV);
     
   app.enableCors({
     origin: corsOrigins,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-    exposedHeaders: ['Set-Cookie'],
   });
 
   app.useGlobalPipes(
