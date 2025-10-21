@@ -5,7 +5,6 @@ import { ConfigService } from "@nestjs/config";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { getSessionConfig } from "./config/session.config";
-import { ExpressAdapter } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{logger:['error','warn','log']});
  
@@ -39,6 +38,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 4000;
   await app.listen(port as number);
+  
   console.log(`Backend running on port ${port}`);
 }
 void bootstrap();

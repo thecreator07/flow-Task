@@ -7,6 +7,7 @@ import { TasksController } from "./tasks/tasks.controller";
 import { TasksModule } from "./tasks/tasks.module";
 import { AuthModule } from "./auth/auth.module";
 import { NotificationsModule } from "./notifications/notifications.module";
+import { HealthModule } from "./health/health.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { NotificationsModule } from "./notifications/notifications.module";
     MongooseModule.forRoot(process.env.MONGODB_URI as string, {
       dbName: "todo-fast",
     }),
+    HealthModule,
     UsersModule,
     AuthModule,
     AiSuggestModule,
