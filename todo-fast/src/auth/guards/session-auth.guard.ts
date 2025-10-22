@@ -19,7 +19,7 @@ export class SessionAuthGuard implements CanActivate {
       throw new UnauthorizedException("No active session found");
     }
 
-    // Attach user to request for easy access in controllers
+    // Attaching user to request for easy access in controllers
     (request as Request & { user: any }).user = session.user;
 
     return true;

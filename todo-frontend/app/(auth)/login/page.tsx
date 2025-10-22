@@ -10,7 +10,6 @@ import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-// import { useAuth } from '@/lib/AuthProvider';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

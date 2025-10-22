@@ -44,7 +44,7 @@ export default function AdminPage() {
 
   const fetchSystemStats = async () => {
     try {
-      // Mock system statistics - in real app, this would come from API
+      // Mock system statistics
       const stats: SystemStats = {
         totalUsers: 25,
         totalTasks: 150,

@@ -216,81 +216,88 @@ export default function TeamsPage() {
       </Card>
 
       {/* Task Distribution by User  */}
-    {/* Task Distribution by User  */}
-<Card>
-  <CardHeader>
-    <CardTitle>Task Distribution</CardTitle>
-    <CardDescription>Tasks assigned to each team member</CardDescription>
-  </CardHeader>
-  <CardContent>
-    {Object.keys(tasksByUser).length === 0 ? (
-      <div className="text-center py-8">
-        <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          No tasks assigned
-        </h3>
-        <p className="text-gray-600">
-          No tasks have been assigned to team members yet.
-        </p>
-      </div>
-    ) : (
-      <div className="space-y-4">
-        {Object.entries(tasksByUser).map(([userId, userTasks]) => {
-          const completed = userTasks.filter((t) => t.status === "COMPLETED").length;
-          const inProgress = userTasks.filter((t) => t.status === "IN_PROGRESS").length;
-          const pending = userTasks.filter((t) => t.status === "PENDING").length;
-          const completionRate =
-            userTasks.length > 0 ? (completed / userTasks.length) * 100 : 0;
 
-          const userInfo = usersById[userId];
-          const displayName =
-            userInfo?.name || userInfo?.email || "Unassigned";
-
-          return (
-            <div key={userId} className="border rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <h4 className="font-medium text-gray-900">
-                    {displayName}
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    {userTasks.length} total tasks
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold">
-                    {Math.round(completionRate)}%
-                  </div>
-                  <div className="text-sm text-gray-600">Completion</div>
-                </div>
-              </div>
-              <Progress value={completionRate} className="h-2 mb-3" />
-              <div className="flex gap-4 text-sm">
-                <div className="flex items-center gap-1">
-                  <Badge variant="secondary">{pending}</Badge>
-                  <span>Pending</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Badge className="bg-orange-100 text-orange-800">
-                    {inProgress}
-                  </Badge>
-                  <span>In Progress</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Badge className="bg-green-100 text-green-800">
-                    {completed}
-                  </Badge>
-                  <span>Completed</span>
-                </div>
-              </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Task Distribution</CardTitle>
+          <CardDescription>Tasks assigned to each team member</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {Object.keys(tasksByUser).length === 0 ? (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No tasks assigned
+              </h3>
+              <p className="text-gray-600">
+                No tasks have been assigned to team members yet.
+              </p>
             </div>
-          );
-        })}
-      </div>
-    )}
-  </CardContent>
-</Card>
+          ) : (
+            <div className="space-y-4">
+              {Object.entries(tasksByUser).map(([userId, userTasks]) => {
+                const completed = userTasks.filter(
+                  (t) => t.status === "COMPLETED"
+                ).length;
+                const inProgress = userTasks.filter(
+                  (t) => t.status === "IN_PROGRESS"
+                ).length;
+                const pending = userTasks.filter(
+                  (t) => t.status === "PENDING"
+                ).length;
+                const completionRate =
+                  userTasks.length > 0
+                    ? (completed / userTasks.length) * 100
+                    : 0;
 
+                const userInfo = usersById[userId];
+                const displayName =
+                  userInfo?.name || userInfo?.email || "Unassigned";
+
+                return (
+                  <div key={userId} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <div>
+                        <h4 className="font-medium text-gray-900">
+                          {displayName}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {userTasks.length} total tasks
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold">
+                          {Math.round(completionRate)}%
+                        </div>
+                        <div className="text-sm text-gray-600">Completion</div>
+                      </div>
+                    </div>
+                    <Progress value={completionRate} className="h-2 mb-3" />
+                    <div className="flex gap-4 text-sm">
+                      <div className="flex items-center gap-1">
+                        <Badge variant="secondary">{pending}</Badge>
+                        <span>Pending</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Badge className="bg-orange-100 text-orange-800">
+                          {inProgress}
+                        </Badge>
+                        <span>In Progress</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Badge className="bg-green-100 text-green-800">
+                          {completed}
+                        </Badge>
+                        <span>Completed</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

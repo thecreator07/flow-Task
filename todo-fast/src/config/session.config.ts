@@ -10,7 +10,7 @@ export const getSessionConfig = (
   const isProduction = configService.get("NODE_ENV") === "production";
   const isHttps = configService.get("HTTPS") === "true" || isProduction;
   
-  console.log("Session config - Production:", isProduction, "HTTPS:", isHttps);
+  // console.log("Session config - Production:", isProduction, "HTTPS:", isHttps);
   
   return {
     secret:
@@ -29,7 +29,7 @@ export const getSessionConfig = (
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: isProduction ? 'none' : 'lax',
-      domain: undefined, // Don't set domain for cross-origin cookies
+      domain: undefined,
     
     },
     name: "sessionId",

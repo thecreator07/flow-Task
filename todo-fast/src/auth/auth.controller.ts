@@ -45,7 +45,7 @@ export class AuthController {
     const user = await this.auth.login(dto.email, dto.password);
 
     // Store user in session
-        req.session.user = user;
+    req.session.user = user;
 
     return {
       success: true,
@@ -76,6 +76,7 @@ export class AuthController {
         httpOnly: true,
         sameSite: 'lax'
       });
+      
       return res.json({
         success: true,
         message: "Logged out successfully",

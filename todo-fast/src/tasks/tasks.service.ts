@@ -76,7 +76,7 @@ export class TasksService {
     return savedTask;
   }
 
-  // Get all tasks (with optional filters)
+  // Get all tasks
   async findAll(filters?: TaskFilters): Promise<Task[]> {
     const query: TaskQuery = {};
     if (filters?.status) query.status = filters.status;
@@ -144,12 +144,12 @@ export class TasksService {
     return { message: "Task deleted successfully" };
   }
 
-  // Update a task (alias for controller compatibility)
+  // Update a task 
   async updateTask(id: string, updateTaskDto: UpdateTaskDto, updatedByUser?: ISessionUser): Promise<Task> {
     return this.update(id, updateTaskDto, updatedByUser);
   }
 
-  // Delete a task (alias for controller compatibility)
+  // Delete a task
   async deleteTask(id: string): Promise<{ message: string }> {
     return this.remove(id);
   }
@@ -172,7 +172,7 @@ export class TasksService {
       // Users can only see tasks assigned to them or created by them
       query.$or = [{ assignedTo: user.id }, { createdBy: user.id }];
     }
-    // MANAGER and ADMIN can see all tasks (no additional filtering)
+    // MANAGER and ADMIN can see all tasks
     console.log("Query:", query);
     const tasks = await this.taskModel
       .find(query)
@@ -202,9 +202,9 @@ export class TasksService {
         },
       },
     ]);
-
+    console.log("stats",stats)
     const total = await this.taskModel.countDocuments(query);
-
+console.log('total doc',total)
     return {
       total,
       byStatus: stats.reduce(

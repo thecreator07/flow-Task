@@ -1,7 +1,7 @@
 import { IUser } from "./user.interface";
 
 export interface ISessionUser extends IUser {
-  // Session-specific user data - extending IUser with session context
+  // Session-specific user data
   sessionId?: string;
 }
 
@@ -9,7 +9,7 @@ export interface ISessionData {
   user?: ISessionUser;
 }
 
-// Extend Express Session interface
+// Express Session interface
 declare module "express-session" {
   interface SessionData {
     user?: ISessionUser;

@@ -56,7 +56,7 @@ export class TasksController {
     return this.tasksService.findAllWithRoleFilter(filters, user);
   }
 
-  //  Get task statistics
+  // Get task statistics
   @Get("stats")
   async getStats(@Session() user: ISessionUser): Promise<TaskStats> {
     return this.tasksService.getTaskStats(user);
@@ -69,7 +69,7 @@ export class TasksController {
   }
 
 
-  //  Get tasks by user 
+  // Get tasks by user 
   @Get("user/:userId")
   @Roles(Role.MANAGER, Role.ADMIN)
   async getTasksByUser(@Param("userId") userId: string) {
@@ -100,7 +100,6 @@ export class TasksController {
 
     return task;
   }
-
 
 
   @Patch(":id")
