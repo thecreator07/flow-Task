@@ -20,7 +20,7 @@ export class AuthController {
     @Body() dto: RegisterDto,
     @Req() req: ExpressRequest,
   ): Promise<IAuthResponse> {
-    const user = await this.auth.register(dto.name, dto.email, dto.password);
+    const user = await this.auth.register(dto.name, dto.email, dto.password,dto.role);
 
     // Store user in session
     req.session.user = user;

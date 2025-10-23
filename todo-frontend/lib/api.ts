@@ -7,6 +7,7 @@ import {
   TaskStats,
   TaskFilters,
   BulkDeleteResponse,
+  Role,
 } from '@/types';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
@@ -39,10 +40,10 @@ class ApiService {
     return response.json();
   }
 
-  async register(name: string, email: string, password: string): Promise<AuthResponse> {
+  async register(name: string, email: string, password: string,role:Role): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password,role }),
     });
   }
 

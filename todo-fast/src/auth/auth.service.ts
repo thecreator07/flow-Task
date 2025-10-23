@@ -3,18 +3,20 @@ import { UsersService } from "../users/users.service";
 import * as bcrypt from "bcrypt";
 import { ISessionUser } from "../interfaces/session.interface";
 import { User } from "src/users/schemas/user.schema";
+import { Role } from "./enums/role.enum";
 
 @Injectable()
 export class AuthService {
-  constructor(private users: UsersService) {}
+  constructor(private users: UsersService) { }
 
   async register(
     name: string,
     email: string,
     password: string,
+    role: Role
   ): Promise<ISessionUser> {
     const hash = await bcrypt.hash(password, 10);
-    const user = await this.users.create({ name, email, password: hash });
+    const user = await this.users.create({ name, email, password: hash, role });
     return {
       id: user.id as string,
       email: user.email,
