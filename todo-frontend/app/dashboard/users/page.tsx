@@ -100,10 +100,10 @@ export default function UsersPage() {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600">Manage team members and their roles</p>
         </div>
-        <Button>
+        {/* <Button>
           <UserPlus className="mr-2 h-4 w-4" />
           Add User
-        </Button>
+        </Button> */}
       </div>
 
       {/* Search */}

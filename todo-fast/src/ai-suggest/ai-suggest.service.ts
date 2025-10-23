@@ -20,6 +20,9 @@ export class AiSuggestService {
       You are an expert productivity assistant. Improve the following task description to make it clearer, more actionable, and professional.
       Keep it concise (max 25 words) but detailed enough for a team context.
 
+      rule:
+      not special words like **,__,-- etc.
+
       Task Description: "${taskDescription}"
       `;
 
